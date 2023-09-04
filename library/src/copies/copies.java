@@ -23,36 +23,6 @@ public class copies {
         return ISBN;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
-    }
 
-
-    public void   AddCopies(int numberCopies,String ISBN) throws SQLException {
-
-        for (int i=0;i<numberCopies;i++){
-
-            try(Connection connection=DatabaseManager.getConnection();) {
-                String requet="insert into copies (id,ISBN,status) values (?,?,disponble)";
-                try(PreparedStatement preparedStatement=connection.prepareStatement(requet)) {
-                    preparedStatement.setString(1, ISBN);
-                    preparedStatement.executeUpdate();
-
-                }catch (SQLException e){
-                    e.printStackTrace();
-
-                }
-
-            }catch (SQLException e){
-
-
-
-            }
-
-
-
-        }
-
-    }
 
 }

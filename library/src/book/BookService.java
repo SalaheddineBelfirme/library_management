@@ -1,4 +1,5 @@
 package  book;
+import copies.copiesService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import db.DatabaseManager;
 public class BookService {
 
 
-    public int createBook(String ISBN, String title,String informations, String author, int quantity ) {
+    public static int createBook(String ISBN, String title,String informations, String author, int quantity ) {
         int Result=0;
         try (Connection connection = DatabaseManager.getConnection()) {
             String insertSql = "INSERT INTO `book` (`ISBN`,`author`,`title`,`informations`, `quantity`)  VALUES (?,?,?,?,?)";
@@ -20,27 +21,21 @@ public class BookService {
                 preparedStatement.setString(1, ISBN);
                 preparedStatement.setString(2, author);
                 preparedStatement.setString(3, title);
-                preparedStatement.setString(4, author);
+                preparedStatement.setString(4, informations);
                 preparedStatement.setDouble(5, quantity);
-                 Result=preparedStatement.executeUpdate();
-                 boolean a=false;
-                 for (int i=0;i<quantity;i++){
-
-
-
-                 }
-                 if (a){
-                     this.deleteBook(ISBN);
-                 }
+                Result=preparedStatement.executeUpdate();
+                if (Result>0){
+                    //  add the copies of the new book
+                    copiesService.AddCopies(quantity,ISBN);
+                }
             }
         } catch (SQLException e) {
             // Handle database exceptions
             e.printStackTrace();
         }
         return Result;
-
     }
-    public int updateBook(String ISBN, String title, String informations, String author, int quantity) {
+    public static int updateBook(String ISBN, String title, String informations, String author, int quantity) {
         int result=0;
         try (Connection connection = DatabaseManager.getConnection()) {
             String updateSql = "UPDATE `book` SET `title` = ?, `informations` = ?, `author` = ?, `quantity` = ? WHERE `ISBN` = ?";
@@ -81,7 +76,7 @@ public class BookService {
         return  result;
     }
 
-    public book getBookByISBN(String ISBN) {
+    public static book getBookByISBN(String ISBN) {
         try (Connection connection = DatabaseManager.getConnection()) {
             String selectSql = "SELECT * FROM `book` WHERE `ISBN` = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
@@ -106,7 +101,7 @@ public class BookService {
 
 
 
-    public List<book> getAllBooks() {
+    public static   List<book> getAllBooks() {
         List<book> books = new ArrayList<>();
 
         try (Connection connection = DatabaseManager.getConnection()) {
