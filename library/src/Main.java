@@ -24,9 +24,16 @@ public class Main {
             choice = scanner.nextInt();
             switch (choice){
                 case 1:{
+                  List<book> listBook =new ArrayList<book>();
+                      listBook.addAll(BookService.getAllBooks());
+                    System.out.println(listBook.toString());
                     break;
                 }
                 case 2:{
+                    System.out.println("Entre the ISBN of the book");
+                    scanner.nextLine();
+                    String isbn=scanner.nextLine();
+                    System.out.println(BookService.getBookByISBN(isbn).toString());
 
                 }
                 case 3:{
@@ -96,6 +103,25 @@ public class Main {
                     break;
                 }
                 case 4:{
+                    System.out.println("Entre the ISBN of the book");
+                    scanner.nextLine();
+                    String isbn=scanner.nextLine();
+
+                    if (BookService.getBookByISBN(isbn)!=null){
+
+                        if (BookService.deleteBook(isbn)){
+                            System.out.println("Your Book is Deleted");
+                        }
+                        else {
+                            System.out.println("try agin");
+                        }
+
+                    }
+                    else {
+                        System.out.println("NOT FOUND");
+                    }
+
+
 
 
                 }
@@ -131,9 +157,9 @@ public class Main {
 
         System.out.println("----------------------Welcome Back to your Scound Hous-------------------------");
         System.out.println("# 1 show all books ");
-        System.out.println("# 2 serche  book with SBIN ");
+        System.out.println("# 2 recherche book with SBIN ");
         System.out.println("# 3 Update Book ");
-        System.out.println("# 3 Delete  book with ISBN ");
+        System.out.println("# 4 Delete  book with ISBN ");
         System.out.println("# 5 Pureu copie of book ");
         System.out.println("# 6 broww  book ");
         System.out.println("# 0 exit ");

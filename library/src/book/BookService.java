@@ -61,13 +61,13 @@ public class BookService {
 
 
 
-    public boolean deleteBook(String ISBN) {
+    public static boolean deleteBook(String ISBN) {
         boolean result=false;
         try (Connection connection = DatabaseManager.getConnection()) {
             String deleteSql = "DELETE FROM `book` WHERE `ISBN` = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
                 preparedStatement.setString(1, ISBN);
-                 result = preparedStatement.execute();
+                 result = preparedStatement.executeUpdate()>0;
             }
         } catch (SQLException e) {
             // Handle database exceptions
