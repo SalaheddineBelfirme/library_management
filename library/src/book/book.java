@@ -56,15 +56,15 @@ public class book {
         this.quantity = quantity;
     }
 
+    public book(){}
+
     public String toString() {
         return "ISBN: " + ISBN +
                 "\nTitle: " + title +
                 "\nAuthor: " + author +
                 "\nInformations: " + informations +
                 "\nQuantity: " + quantity;
+
+
     }
-
-
-
-
 }

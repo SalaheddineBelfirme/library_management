@@ -10,10 +10,12 @@ public class copies {
     private  String ISBN;
     private String  status;
 
-    public copies(String isbn, String status) {
+    public copies(int id ,String isbn, String status) {
+        this.id=id;
         ISBN = isbn;
         this.status = status;
     }
+
 
     public int getId() {
         return id;
@@ -23,6 +25,14 @@ public class copies {
         return ISBN;
     }
 
+
+@Override
+    public  String toString(){
+        return  "Id :"+id+
+               " \n ISBN :"+ISBN+
+               " \n Stsatu :"+status;
+
+}
 
 
 }

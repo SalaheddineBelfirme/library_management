@@ -13,9 +13,8 @@ public class DatabaseManager {
     public static Connection getConnection() {
         try {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            System.out.println("connctio done");
         } catch (SQLException exception) {
-            System.out.println("something went wrong");
+            System.out.println("something went wrong from the connection");
             System.out.println(exception.getMessage());
         }
         return connection;

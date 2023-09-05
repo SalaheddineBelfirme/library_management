@@ -8,6 +8,8 @@ import copies.copies;
 import java.awt.print.Book;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import  java.util.Scanner;
 
 public class Main {
@@ -29,23 +31,67 @@ public class Main {
                 }
                 case 3:{
                     System.out.println("can you put the ISBN of the book");
-
                     scanner.nextLine();
                    String ISBN= scanner.nextLine();
                    book book=BookService.getBookByISBN(ISBN);
-                    System.out.println("here informtions of your book: ");
-                    System.out.println(book.toString());
+                   if (book!=null){
+                       System.out.println("here informtions of your book: ");
+                       System.out.println(book.toString());
+                       System.out.println("#1 if the ubdate with countity tap 1 ");
+                       System.out.println("#2 if the Ubdate with out qountity tap 2");
+                         choice=scanner.nextInt();
+                         if (choice==1) {
+                             System.out.println("pleses entr your  new Qountity");
+                             int qountity = scanner.nextInt();
+                             if (qountity > book.getQuantity()) {
+                                 copiesService.AddCopies(qountity - book.getQuantity(), ISBN);
+                                 System.out.println("all copies is added ");
+
+                             } else {
+                                 System.out.println("you need to drop same copies");
+                                 for (int i = 0; i < book.getQuantity() - qountity; i++) {
+                                     System.out.println("here copies of the book");
+                                     List<copies> targetlist = new ArrayList<copies>();
+                                     targetlist.addAll(copiesService.searchCopiesByISBN(ISBN));
+                                     for (copies Copies : targetlist) {
+
+                                         System.out.println(Copies.toString());
+                                     }
+                                     System.out.println("your quontity now is :" + book.getQuantity());
+                                     System.out.println("entre the id of the copies u Want delete");
+                                     int id = scanner.nextInt();
+                                     int a = copiesService.deleteCopiesByID(id);
+                                     if (copiesService.deleteCopiesByID(id) == 0) {
+                                         System.out.println("try agine the book sile ");
+                                     } else {
+                                         System.out.println("The book is still available! try again");
+                                     }
+
+                                 }
+
+                             }
+                         }else {
+                             scanner.nextLine();
+                             System.out.println("please enter your  new title :");
+                             String title =scanner.nextLine();
+                             System.out.println("please enter your  new  information :");
+                             String information = scanner.nextLine();
+                             System.out.println("please enter your  new author :");
+                             String author=scanner.nextLine();
+
+                             if (BookService.updateBook(book.getISBN(),title,information,author)>0){
+                                 System.out.println("your book is ubdated");
+                             }
 
 
-                    System.out.println("#1 if the ubdate with countity tap 1 ");
-                    System.out.println("#2 if the Ubdate with out qountity tap 2");
-                    int qountity =scanner.nextInt();
-                    if (qountity>book.getQuantity()){
-                        copiesService.AddCopies(qountity - book.getQuantity(),ISBN);
-                    }
-                    else {
-                        System.out.println("you need to drop same copies");
-                    }
+
+                         }
+                   }
+                   else {
+                       System.out.println("not found any book with your ISBN");
+                   }
+
+
 
                     break;
                 }
@@ -90,7 +136,8 @@ public class Main {
         System.out.println("# 3 Delete  book with ISBN ");
         System.out.println("# 5 Pureu copie of book ");
         System.out.println("# 6 broww  book ");
-        System.out.println("# 7 show all typs of books ");
+        System.out.println("# 0 exit ");
+        System.out.println("________________________________________________________________________________");
 
 
 

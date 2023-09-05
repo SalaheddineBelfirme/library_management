@@ -35,16 +35,16 @@ public class BookService {
         }
         return Result;
     }
-    public static int updateBook(String ISBN, String title, String informations, String author, int quantity) {
+    public static int updateBook(String ISBN ,String title, String informations, String author) {
         int result=0;
         try (Connection connection = DatabaseManager.getConnection()) {
-            String updateSql = "UPDATE `book` SET `title` = ?, `informations` = ?, `author` = ?, `quantity` = ? WHERE `ISBN` = ?";
+            String updateSql = "UPDATE `book` SET `title` = ?, `informations` = ?, `author` = ?  WHERE `ISBN` = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateSql)) {
                 preparedStatement.setString(1, title);
                 preparedStatement.setString(2, informations);
                 preparedStatement.setString(3, author);
-                preparedStatement.setInt(4, quantity);
-                preparedStatement.setString(5, ISBN);
+                preparedStatement.setString(4, ISBN);
+
                 result = preparedStatement.executeUpdate();
                 System.out.println(result);
 
@@ -90,6 +90,7 @@ public class BookService {
                         int quantity = resultSet.getInt("quantity");
                         return new book(ISBN, author, title, informations, quantity);
                     }
+
                 }
             }
         } catch (SQLException e) {
