@@ -78,6 +78,28 @@ public class copiesService {
     }
 
 
+    public static copies getAvailableCobyByISBN(String ISBN) throws SQLException {
+        copies copie=null;
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String query = "SELECT * FROM copies WHERE ISBN = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, ISBN);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    int copyID = resultSet.getInt("id");
+                    String status = resultSet.getString("status");
+                     copie = new copies(copyID,ISBN, status);
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return copie;
+    }
 
 
 

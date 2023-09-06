@@ -30,11 +30,12 @@ public class Main {
                     break;
                 }
                 case 2:{
-                    System.out.println("Entre the ISBN of the book");
-                    scanner.nextLine();
-                    String isbn=scanner.nextLine();
-                    System.out.println(BookService.getBookByISBN(isbn).toString());
 
+                    System.out.println("Entre the isbn or title or author  of the book");
+                    scanner.nextLine();
+                    String kyword=scanner.nextLine();
+                    System.out.println(BookService.getBookByISBNorTitle(kyword).toString());
+                    break;
                 }
                 case 3:{
                     System.out.println("can you put the ISBN of the book");
@@ -126,17 +127,57 @@ public class Main {
 
                 }
                 case 5:{
+                        scanner.nextLine();
+                    System.out.println("please enter ISBN :");
+                    String isbn =scanner.nextLine();
+                    System.out.println("please enter  title :");
+                    String title =scanner.nextLine();
+                    System.out.println("please enter information :");
+                    String information = scanner.nextLine();
+                    System.out.println("please enter author :");
+                    String author=scanner.nextLine();
+                    System.out.println("please enter quantitiy :");
+                    int quantitiy=scanner.nextInt();
+                    System.out.println("quantity :"+quantitiy);
+                    book book=BookService.getBookByISBN(isbn);
+                    while (book!=null){
+                        scanner.nextLine();
+                        System.out.println("The ISBN Already Found Please Enter anther ISBN ");
+                        isbn=scanner.nextLine();
+                        book=BookService.getBookByISBN(isbn);
+                    }
+                    BookService.createBook(isbn,title,information,author,quantitiy);
+
+
+
+
+
                     break;
                 }
                 case 6:{
+                    scanner.nextLine();
+                    System.out.println("please enter ISBN :");
+                    String isbn =scanner.nextLine();
+                    if(copiesService.getAvailableCobyByISBN(isbn)!=null){
+                        System.out.println("here your book you want it :");
+                        System.out.println(copiesService.getAvailableCobyByISBN(isbn).toString());
+                       int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),2,"2023-09-06","2023-10-06");
+                       if (res>0){
+                           System.out.println("brrowed done");
+                       }
+                    }
 
                 }
                 case 7:{
                     break;
                 }
                 case 8:{
+                    int a=2;
+                    int b=3 ;
+                    System.out.println(a+b);
 
                 }
+
                 case 0 :{
                     break;
                 }
@@ -157,10 +198,11 @@ public class Main {
 
         System.out.println("----------------------Welcome Back to your Scound Hous-------------------------");
         System.out.println("# 1 show all books ");
-        System.out.println("# 2 recherche book with SBIN ");
+        System.out.println("# 2 recherche book with SBIN or author or title");
         System.out.println("# 3 Update Book ");
         System.out.println("# 4 Delete  book with ISBN ");
-        System.out.println("# 5 Pureu copie of book ");
+        System.out.println("# 4 Delete copy of book with ISBN ");
+        System.out.println("# 5 add new  book ");
         System.out.println("# 6 broww  book ");
         System.out.println("# 0 exit ");
         System.out.println("________________________________________________________________________________");
