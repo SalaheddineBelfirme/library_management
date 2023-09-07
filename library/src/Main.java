@@ -5,12 +5,18 @@ import book.BookService;
 import  book.book;
 import copies.copiesService;
 import copies.copies;
+import client.clientService;
+import client.client;
+
+import javax.swing.*;
 import java.awt.print.Book;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import  java.util.Scanner;
+
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -30,7 +36,6 @@ public class Main {
                     break;
                 }
                 case 2:{
-
                     System.out.println("Entre the isbn or title or author  of the book");
                     scanner.nextLine();
                     String kyword=scanner.nextLine();
@@ -108,6 +113,7 @@ public class Main {
                     scanner.nextLine();
                     String isbn=scanner.nextLine();
 
+
                     if (BookService.getBookByISBN(isbn)!=null){
 
                         if (BookService.deleteBook(isbn)){
@@ -155,20 +161,72 @@ public class Main {
                     break;
                 }
                 case 6:{
+
                     scanner.nextLine();
                     System.out.println("please enter ISBN :");
                     String isbn =scanner.nextLine();
                     if(copiesService.getAvailableCobyByISBN(isbn)!=null){
                         System.out.println("here your book you want it :");
                         System.out.println(copiesService.getAvailableCobyByISBN(isbn).toString());
-                       int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),2,"2023-09-06","2023-10-06");
-                       if (res>0){
-                           System.out.println("brrowed done");
-                       }
+                        System.out.println("please enter your name ");
+                        String name=scanner.nextLine();
+                        System.out.println("please enter your member Number ");
+                        int memberNumber=scanner.nextInt();
+                        if( clientService.searchClientByMemberNumber(memberNumber)!=null){
+                            //function search the client have any book before
+                            List<Date> dates=new ArrayList<>();
+                            if(!clientService.checkClientInExternal(memberNumber).isEmpty()){
+                                dates.addAll(clientService.checkClientInExternal(memberNumber));
+                                System.out.println("you take book in :"+dates.get(0)+" welcome after this date  :"+dates.get(1));
+                            }
+                            else {
+                                System.out.println(clientService.checkClientInExternal(memberNumber));
+                                System.out.println();
+                                int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber,"2023-09-06","2023-10-06");
+                                if (res>0){
+                                    System.out.println("brrowed done");
+                                }
+                            }
+
+
+                        }
+                        else {
+                            clientService.addClient(memberNumber,name);
+                            System.out.println("your account create with successfully");
+                            int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber,"2023-09-06","2023-10-06");
+                            if (res>0){
+                                System.out.println("brrowed done");
+                            }
+
+
+                        }
+
+
+
+
+
+                    }else {
+                        System.out.println("the book is unavailable");
                     }
+                    break;
 
                 }
                 case 7:{
+                    scanner.nextLine();
+                    System.out.println("please enter ISBN :");
+                    String isbn =scanner.nextLine();
+                    System.out.println("please enter your member Number ");
+                    int memberNumber=scanner.nextInt();
+
+                   if(BookService.getCopeiByISBN("b1",1)!=0){
+                       int n=BookService.returnBook(BookService.getCopeiByISBN("b1",1));
+
+                       if (n>0){
+                           System.out.println("thank you ");
+                       }else {
+                           System.out.println("try agine");
+                       }
+                   }
                     break;
                 }
                 case 8:{

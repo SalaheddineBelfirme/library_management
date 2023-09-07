@@ -180,6 +180,48 @@ public class BookService {
         return Result;
     }
 
+    public static int getCopeiByISBN(String ISBN,int memberNumber) {
+        int res=0;
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String selectSql = "SELECT copies.id from `externalns`,book,copies  WHERE book.ISBN=copies.ISBN and externalns.idCopie=copies.id and book.ISBN =? and externalns.memberNumber=?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
+                preparedStatement.setString(1, ISBN);
+                preparedStatement.setInt(2,memberNumber );
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                    if (resultSet.next()) {
+                        // Create a Book object from the retrieved data
+                        res= resultSet.getInt("id");
+                    }
+
+                }
+            }
+        } catch (SQLException e) {
+            // Handle database exceptions
+            e.printStackTrace();
+        }
+        return res; // Book not found or an error occurred
+    }
+
+    public static int returnBook(int idCopie) {
+        int res=0;
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String insertSql = "DELETE FROM `externalns` WHERE  idCopie = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSql)) {
+                preparedStatement.setInt(1,idCopie);
+
+                res=preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            // Handle database exceptions
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+
 
 
 }

@@ -82,9 +82,10 @@ public class copiesService {
         copies copie=null;
 
         try (Connection connection = DatabaseManager.getConnection()) {
-            String query = "SELECT * FROM copies WHERE ISBN = ?";
+            String query = "SELECT * FROM copies WHERE ISBN = ? and status=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, ISBN);
+                preparedStatement.setString(2, "available");
                 ResultSet resultSet = preparedStatement.executeQuery();
 
                 if (resultSet.next()) {
