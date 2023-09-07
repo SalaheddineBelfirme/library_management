@@ -38,7 +38,7 @@ public class Main {
                 }
                 case 3:{
                     System.out.println("can you put the ISBN of the book");
-                    scanner.nextLine();
+
                    String ISBN= scanner.nextLine();
                    book book=BookService.getBookByISBN(ISBN);
                    if (book!=null){
