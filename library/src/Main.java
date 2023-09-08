@@ -230,11 +230,19 @@ public class Main {
                     break;
                 }
                 case 8:{
+
                     int a=2;
                     int b=3 ;
-                    System.out.println(a+b);
+                    System.out.println(sum(a,b));
+                    book book=new book();
+                    book.setAuthor("salah");
+                    System.out.println(book.getISBN());
+
+
+
 
                 }
+
 
                 case 0 :{
                     break;
@@ -243,6 +251,7 @@ public class Main {
                 default  :
                     System.out.println("ivalid chois");
             }
+
 
 
         }while (choice!=0);
@@ -259,9 +268,9 @@ public class Main {
         System.out.println("# 2 recherche book with SBIN or author or title");
         System.out.println("# 3 Update Book ");
         System.out.println("# 4 Delete  book with ISBN ");
-        System.out.println("# 4 Delete copy of book with ISBN ");
-        System.out.println("# 5 add new  book ");
-        System.out.println("# 6 broww  book ");
+      //  System.out.println("# 4 Delete copy of book with ISBN ");
+        System.out.println("# 5 add new book   ");
+        System.out.println("# 6 take   book with ISBN");
         System.out.println("# 0 exit ");
         System.out.println("________________________________________________________________________________");
 
@@ -272,7 +281,9 @@ public class Main {
 
     }
 
-
+    public static int sum(int n1,int n2){
+        return n1+n2;
+    }
 
 
 
