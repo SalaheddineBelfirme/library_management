@@ -5,6 +5,15 @@ import db.DatabaseManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 
 public class copiesService {
@@ -38,19 +47,22 @@ public class copiesService {
     public static int deleteCopiesByID(int copyID)  {
         int bol=0;
         try (Connection connection = DatabaseManager.getConnection()) {
+
             String query = "DELETE FROM copies WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, copyID);
                 int rowsDeleted = preparedStatement.executeUpdate();
-
+                bol=rowsDeleted;
                 if (rowsDeleted > 0) {
-                    bol=1;
+                    System.out.println("the number1 "+bol);
+
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return bol;
+
+        return bol  ;
     }
 
 
@@ -103,7 +115,61 @@ public class copiesService {
     }
 
 
+    public static int[] getStatistics () throws SQLException {
+        int[] Results=new int[3];
 
+        try (Connection connection = DatabaseManager.getConnection()) {
+            Statement statement = connection.createStatement();
 
+            // Execute the first query
+            ResultSet availableResult = statement.executeQuery("SELECT COUNT(*) FROM copies WHERE status = 'available'");
+            if (availableResult.next()) {
+               Results[0]= availableResult.getInt(1);
 
+            }
+
+            // Execute the second query
+            ResultSet unavailableResult = statement.executeQuery("SELECT COUNT(*) FROM copies WHERE status = 'unavailable'");
+            if (unavailableResult.next()) {
+                Results[1] = unavailableResult.getInt(1);
+            }
+
+            // Execute the third query
+            ResultSet missingResult = statement.executeQuery("SELECT COUNT(*) FROM copies WHERE status = 'missing'");
+            if (missingResult.next()) {
+                Results[2]= missingResult.getInt(1);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    return Results;
+
+    }
+
+    public  static  void  printStatistics(){
+
+        File file = new File("C:\\\\Desktop\\\\sasjava\\\\library_management\\\\Statistics/data.txt"); // Specify the file path
+
+        try (FileWriter fw = new FileWriter(file,true);
+             BufferedWriter writer = new BufferedWriter(fw)) {
+
+            int[] statistics = getStatistics();
+            writer.newLine();
+            writer.write("the number of Available books: " + statistics[0]);
+            writer.newLine();
+            writer.write("the number of unavailable books: " + statistics[1]);
+            writer.newLine();
+            writer.write("the number of missing books: " + statistics[2]);
+            writer.newLine();
+
+            System.out.println("Text has been written to the file.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
+

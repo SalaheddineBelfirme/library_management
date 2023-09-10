@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import  java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Main {
@@ -36,48 +38,51 @@ public class Main {
                     break;
                 }
                 case 2:{
-                    System.out.println("Entre the isbn or title or author  of the book");
+                    System.out.println("Entre the ISBN or title or author  of the book");
                     scanner.nextLine();
                     String kyword=scanner.nextLine();
                     System.out.println(BookService.getBookByISBNorTitle(kyword).toString());
                     break;
                 }
                 case 3:{
-                    System.out.println("can you put the ISBN of the book");
+                    scanner.nextLine();
+                    System.out.println("enter the ISBN of the book");
 
                    String ISBN= scanner.nextLine();
                    book book=BookService.getBookByISBN(ISBN);
                    if (book!=null){
-                       System.out.println("here informtions of your book: ");
+                       System.out.println(" here are the book's informations: ");
                        System.out.println(book.toString());
-                       System.out.println("#1 if the ubdate with countity tap 1 ");
-                       System.out.println("#2 if the Ubdate with out qountity tap 2");
+                       System.out.println("#1 if the update contains  quantity changes tap 1 ");
+                       System.out.println("#2 if the update contains no quantity changes tap 2");
                          choice=scanner.nextInt();
                          if (choice==1) {
-                             System.out.println("pleses entr your  new Qountity");
+                             System.out.println("please enter your new quantity");
                              int qountity = scanner.nextInt();
                              if (qountity > book.getQuantity()) {
                                  copiesService.AddCopies(qountity - book.getQuantity(), ISBN);
-                                 System.out.println("all copies is added ");
+                                 System.out.println("all copies are added ");
 
                              } else {
-                                 System.out.println("you need to drop same copies");
-                                 for (int i = 0; i < book.getQuantity() - qountity; i++) {
-                                     System.out.println("here copies of the book");
+                                 System.out.println("you need to delete some copies");
+                                 while ( BookService.getBookByISBN(ISBN).getQuantity() > qountity) {
+                                     System.out.println("here are copies of the book");
                                      List<copies> targetlist = new ArrayList<copies>();
                                      targetlist.addAll(copiesService.searchCopiesByISBN(ISBN));
                                      for (copies Copies : targetlist) {
 
                                          System.out.println(Copies.toString());
                                      }
-                                     System.out.println("your quontity now is :" + book.getQuantity());
-                                     System.out.println("entre the id of the copies u Want delete");
+
+                                     System.out.println("your current quantity now is :" + BookService.getBookByISBN(ISBN).getQuantity());
+                                     System.out.println("enter the id of the copies you want to delete");
                                      int id = scanner.nextInt();
                                      int a = copiesService.deleteCopiesByID(id);
-                                     if (copiesService.deleteCopiesByID(id) == 0) {
-                                         System.out.println("try agine the book sile ");
+                                     if (a==0) {
+                                         System.out.println(" try again the id is not found ");
                                      } else {
-                                         System.out.println("The book is still available! try again");
+                                         System.out.println("done the book is deleted ");
+
                                      }
 
                                  }
@@ -85,15 +90,14 @@ public class Main {
                              }
                          }else {
                              scanner.nextLine();
-                             System.out.println("please enter your  new title :");
+                             System.out.println("please enter the  new title :");
                              String title =scanner.nextLine();
-                             System.out.println("please enter your  new  information :");
+                             System.out.println("please enter the  new  information :");
                              String information = scanner.nextLine();
-                             System.out.println("please enter your  new author :");
+                             System.out.println("please enter the  new name of author :");
                              String author=scanner.nextLine();
-
                              if (BookService.updateBook(book.getISBN(),title,information,author)>0){
-                                 System.out.println("your book is ubdated");
+                                 System.out.println("your book is updated");
                              }
 
 
@@ -101,7 +105,7 @@ public class Main {
                          }
                    }
                    else {
-                       System.out.println("not found any book with your ISBN");
+                       System.out.println("not found ");
                    }
 
 
@@ -109,25 +113,25 @@ public class Main {
                     break;
                 }
                 case 4:{
-                    System.out.println("Entre the ISBN of the book");
+                    System.out.println("Enter the ISBN of the book");
                     scanner.nextLine();
                     String isbn=scanner.nextLine();
 
 
                     if (BookService.getBookByISBN(isbn)!=null){
 
-                        if (BookService.deleteBook(isbn)){
+                        if (BookService.archivBook(isbn)){
                             System.out.println("Your Book is Deleted");
                         }
                         else {
-                            System.out.println("try agin");
+                            System.out.println("try again");
                         }
 
                     }
                     else {
                         System.out.println("NOT FOUND");
                     }
-
+                    break;
 
 
 
@@ -142,13 +146,12 @@ public class Main {
                     String information = scanner.nextLine();
                     System.out.println("please enter author :");
                     String author=scanner.nextLine();
-                    System.out.println("please enter quantitiy :");
+                    System.out.println("please enter quantity :");
                     int quantitiy=scanner.nextInt();
-                    System.out.println("quantity :"+quantitiy);
                     book book=BookService.getBookByISBN(isbn);
                     while (book!=null){
                         scanner.nextLine();
-                        System.out.println("The ISBN Already Found Please Enter anther ISBN ");
+                        System.out.println("The ISBN Already Found Please Enter another ISBN ");
                         isbn=scanner.nextLine();
                         book=BookService.getBookByISBN(isbn);
                     }
@@ -166,25 +169,24 @@ public class Main {
                     System.out.println("please enter ISBN :");
                     String isbn =scanner.nextLine();
                     if(copiesService.getAvailableCobyByISBN(isbn)!=null){
-                        System.out.println("here your book you want it :");
+                        System.out.println("here is the wanted book  :");
                         System.out.println(copiesService.getAvailableCobyByISBN(isbn).toString());
                         System.out.println("please enter your name ");
                         String name=scanner.nextLine();
                         System.out.println("please enter your member Number ");
                         int memberNumber=scanner.nextInt();
                         if( clientService.searchClientByMemberNumber(memberNumber)!=null){
-                            //function search the client have any book before
                             List<Date> dates=new ArrayList<>();
                             if(!clientService.checkClientInExternal(memberNumber).isEmpty()){
                                 dates.addAll(clientService.checkClientInExternal(memberNumber));
-                                System.out.println("you take book in :"+dates.get(0)+" welcome after this date  :"+dates.get(1));
+                                System.out.println("you took a book in :"+dates.get(0)+" comeback after :"+dates.get(1));
                             }
                             else {
                                 System.out.println(clientService.checkClientInExternal(memberNumber));
                                 System.out.println();
-                                int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber,"2023-09-06","2023-10-06");
+                                int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber);
                                 if (res>0){
-                                    System.out.println("brrowed done");
+                                    System.out.println("borrowing done");
                                 }
                             }
 
@@ -192,10 +194,10 @@ public class Main {
                         }
                         else {
                             clientService.addClient(memberNumber,name);
-                            System.out.println("your account create with successfully");
-                            int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber,"2023-09-06","2023-10-06");
+                            System.out.println("your account created successfully");
+                            int res= BookService.browBook(copiesService.getAvailableCobyByISBN(isbn).getId(),memberNumber);
                             if (res>0){
-                                System.out.println("brrowed done");
+                                System.out.println("borrowing done");
                             }
 
 
@@ -218,25 +220,28 @@ public class Main {
                     System.out.println("please enter your member Number ");
                     int memberNumber=scanner.nextInt();
 
-                   if(BookService.getCopeiByISBN("b1",1)!=0){
-                       int n=BookService.returnBook(BookService.getCopeiByISBN("b1",1));
+                   if(BookService.getCopeiByISBN(isbn,memberNumber)!=0){
+                       int n=BookService.returnBook(BookService.getCopeiByISBN(isbn,memberNumber),memberNumber);
 
                        if (n>0){
-                           System.out.println("thank you ");
+                           System.out.println("thank you  ");
                        }else {
-                           System.out.println("try agine");
+                           System.out.println("try again");
                        }
+                   }
+                   else {
+                       System.out.println("no book with your information ");
                    }
                     break;
                 }
                 case 8:{
 
-                    int a=2;
-                    int b=3 ;
-                    System.out.println(sum(a,b));
-                    book book=new book();
-                    book.setAuthor("salah");
-                    System.out.println(book.getISBN());
+                if (copiesService.getStatistics().length>0){
+                    copiesService.printStatistics();
+                    System.out.println("the number of  Available books :"+copiesService.getStatistics()[0]);
+                    System.out.println("the  number of unavailable books :"+copiesService.getStatistics()[1]);
+                    System.out.println( "the number of  missing books : "+copiesService.getStatistics()[2]);
+                }
 
 
 
@@ -249,7 +254,7 @@ public class Main {
                 }
 
                 default  :
-                    System.out.println("ivalid chois");
+                    System.out.println("invalid choice");
             }
 
 
@@ -263,14 +268,15 @@ public class Main {
     }
     public static   void runApp (){
 
-        System.out.println("----------------------Welcome Back to your Scound Hous-------------------------");
+        System.out.println("----------------------Welcome Back to your Second Home-------------------------");
         System.out.println("# 1 show all books ");
-        System.out.println("# 2 recherche book with SBIN or author or title");
+        System.out.println("# 2 Search book with ISBN or author or title");
         System.out.println("# 3 Update Book ");
         System.out.println("# 4 Delete  book with ISBN ");
-      //  System.out.println("# 4 Delete copy of book with ISBN ");
         System.out.println("# 5 add new book   ");
-        System.out.println("# 6 take   book with ISBN");
+        System.out.println("# 6 take  book with ISBN");
+        System.out.println("# 7 give back the book");
+        System.out.println("# 8 the statistics of the library");
         System.out.println("# 0 exit ");
         System.out.println("________________________________________________________________________________");
 
