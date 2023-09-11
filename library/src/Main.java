@@ -218,7 +218,7 @@ public class Main {
                     System.out.println("please enter your member Number ");
                     int memberNumber=scanner.nextInt();
 
-                   if(BookService.getCopeiByISBN("b1",1)!=0){
+                   if(BookService.getCopeiByISBN(isbn,memberNumber)!=0){
                        int n=BookService.returnBook(BookService.getCopeiByISBN("b1",1));
 
                        if (n>0){
@@ -227,18 +227,13 @@ public class Main {
                            System.out.println("try agine");
                        }
                    }
+                   else {
+                       System.out.println("we don't have book with the isbn ");
+                   }
                     break;
                 }
                 case 8:{
-
-                    int a=2;
-                    int b=3 ;
-                    System.out.println(sum(a,b));
-                    book book=new book();
-                    book.setAuthor("salah");
-                    System.out.println(book.getISBN());
-
-
+                    int i=0;
 
 
                 }

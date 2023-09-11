@@ -61,11 +61,11 @@ public class book {
     public String toString() {
         return
                 "\nISBN: " + ISBN +
-                "\nTitle: " + title +
-                "\nAuthor: " + author +
-                "\nInformations: " + informations +
-                "\nQuantity: " + quantity+
-               "\n------------------";
+                "  Title: " + title +
+                "  Author: " + author +
+                "  Informations: " + informations +
+                "  Quantity: " + quantity+
+               "\n----------------------------------------------------------------------------------------------------------";
 
 
     }
