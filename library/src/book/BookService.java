@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.CallableStatement;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Calendar;
 import db.DatabaseManager;
 
 
@@ -65,7 +67,7 @@ public class BookService {
     public static boolean deleteBook(String ISBN) {
         boolean result=false;
         try (Connection connection = DatabaseManager.getConnection()) {
-            String deleteSql = "DELETE FROM `book` WHERE `ISBN` = ?";
+            String deleteSql = "update  `book` set   archived=1 WHERE `ISBN` = ? ";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
                 preparedStatement.setString(1, ISBN);
                  result = preparedStatement.executeUpdate()>0;
@@ -102,9 +104,31 @@ public class BookService {
     }
 
 
+
+    public static boolean archivBook(String ISBN) {
+        boolean res=false;
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String call = "{ call ArchiveBook(?) }";
+            try (   CallableStatement callableStatement = connection.prepareCall(call);) {
+
+                callableStatement.setString(1, ISBN);
+
+                callableStatement.execute();
+                res=true;
+
+            }
+        } catch (SQLException e) {
+            // Handle database exceptions
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
+
     public static book getBookByISBNorTitle(String keyword) {
         try (Connection connection = DatabaseManager.getConnection()) {
-            String selectSql = "SELECT * FROM `book` WHERE ISBN LIKE CONCAT('%', ?, '%') OR title LIKE CONCAT('%', ?, '%') OR author LIKE CONCAT('%', ?, '%');";
+            String selectSql = "SELECT * FROM `book` WHERE ISBN LIKE CONCAT('%', ?, '%') OR title LIKE CONCAT('%', ?, '%') OR author LIKE CONCAT('%', ?, '%') and archived=0;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
                 preparedStatement.setString(1, keyword);
                 preparedStatement.setString(2, keyword);
@@ -132,7 +156,7 @@ public class BookService {
         List<book> books = new ArrayList<>();
 
         try (Connection connection = DatabaseManager.getConnection()) {
-            String selectSql = "SELECT * FROM `book`"; // Assuming `book` is your table name
+            String selectSql = "SELECT * FROM `book` where archived=0"; // Assuming `book` is your table name
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -162,15 +186,23 @@ public class BookService {
 
 
 
-    public static int browBook(int idCopie, int memberNumber, String startDate, String endDate) {
+    public static int browBook(int idCopie, int memberNumber) {
         int Result=0;
         try (Connection connection = DatabaseManager.getConnection()) {
             String insertSql = "INSERT INTO `Externalns`(`idCopie`,`memberNumber`,`startDate`,`endDate`)  VALUES (?,?,?,?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertSql)) {
+                Date utilStartDate = new Date(System.currentTimeMillis());
+                java.sql.Date sqlStartDate = new java.sql.Date(utilStartDate.getTime());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(utilStartDate);
+                calendar.add(Calendar.DATE, 10);
+                java.sql.Date sqlEndDate = new java.sql.Date(calendar.getTime().getTime());
+
+
                 preparedStatement.setInt(1,idCopie);
                 preparedStatement.setInt(2, memberNumber);
-                preparedStatement.setString(3, "2023-09-06");
-                preparedStatement.setString(4,"2023-09-09");
+                preparedStatement.setDate(3, sqlStartDate    );
+                preparedStatement.setDate(4,sqlEndDate);
                 Result=preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -204,12 +236,14 @@ public class BookService {
         return res; // Book not found or an error occurred
     }
 
-    public static int returnBook(int idCopie) {
+    public static int returnBook(int idCopie ,int memberNumber) {
         int res=0;
         try (Connection connection = DatabaseManager.getConnection()) {
-            String insertSql = "DELETE FROM `externalns` WHERE  idCopie = ?";
+            String insertSql = "DELETE FROM `externalns` WHERE  idCopie = ? AND memberNumber =?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertSql)) {
                 preparedStatement.setInt(1,idCopie);
+                preparedStatement.setInt(2,memberNumber);
+
 
                 res=preparedStatement.executeUpdate();
             }
