@@ -13,3 +13,7 @@ the number of missing books: 0
 the number of Available books: 10
 the number of unavailable books: 2
 the number of missing books: 0
+
+the number of Available books: 7
+the number of unavailable books: 1
+the number of missing books: 1
