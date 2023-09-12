@@ -25,17 +25,15 @@ public class Main {
         int choice;
         Scanner scanner=new Scanner(System.in);
 
-
         do {
-            runApp();
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+           choice=runApp(scanner );
             switch (choice){
                 case 1:{
                   List<book> listBook =new ArrayList<book>();
                       listBook.addAll(BookService.getAllBooks());
                     System.out.println(listBook.toString());
                     break;
+
                 }
                 case 2:{
                     System.out.println("Entre the ISBN or title or author  of the book");
@@ -253,8 +251,6 @@ public class Main {
 
 
                 }
-
-
                 case 0 :{
                     break;
                 }
@@ -270,7 +266,8 @@ public class Main {
 
 
     }
-    public static   void runApp (){
+    public static   int runApp (Scanner scanner){
+
 
         System.out.println("----------------------Welcome Back to your Second Home-------------------------");
         System.out.println("# 1 show all books ");
@@ -283,6 +280,22 @@ public class Main {
         System.out.println("# 8 the statistics of the library");
         System.out.println("# 0 exit ");
         System.out.println("________________________________________________________________________________");
+        System.out.println("enter your  choice");
+        int choice=0;
+        if (scanner.hasNextInt()){
+            choice=scanner.nextInt();
+
+
+        }
+        else {
+            scanner.nextLine();
+            scanner.nextLine();
+            runApp(scanner);
+            return 0;
+        }
+
+       return choice;
+
 
 
     }
