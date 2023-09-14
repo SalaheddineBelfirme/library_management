@@ -47,7 +47,6 @@ public class BookService {
                 preparedStatement.setString(2, informations);
                 preparedStatement.setString(3, author);
                 preparedStatement.setString(4, ISBN);
-
                 result = preparedStatement.executeUpdate();
                 System.out.println(result);
 
