@@ -36,7 +36,10 @@ public class Main {
                 case 2:{
                     System.out.println("Entre the ISBN or title or author  of the book");
                     String kyword=scanner.nextLine();
-                    System.out.println(BookService.getBookByISBNorTitle(kyword).toString());
+                    if (BookService.getBookByISBNorTitle(kyword)!=null){
+                        System.out.println(BookService.getBookByISBNorTitle(kyword).toString());
+                    }
+
                     break;
                 }
                 case 3:{
@@ -96,14 +99,16 @@ public class Main {
                 }
                 case 4:{
                     System.out.println("Enter the ISBN of the book");
-                    scanner.nextLine();
                     String isbn=scanner.nextLine();
                     if (BookService.getBookByISBN(isbn)!=null){
-                        if (BookService.archivBook(isbn)){
+                        if (BookService.archivBook(isbn)==1){
                             System.out.println("Your Book is Deleted");
                         }
-                        else {
+                        else if (BookService.archivBook(isbn)==0){
                             System.out.println("try again");
+                        }
+                        else if (BookService.archivBook(isbn)==2){
+                            System.out.println("the book steil browing ");
                         }
                     }
                     else {
@@ -112,7 +117,6 @@ public class Main {
                     break;
                 }
                 case 5:{
-                        scanner.nextLine();
                     System.out.println("please enter ISBN :");
                     String isbn =scanner.nextLine();
                     System.out.println("please enter  title :");
@@ -142,7 +146,7 @@ public class Main {
                         System.out.println("please enter your name ");
                         String name=scanner.nextLine();
                         System.out.println("please enter your member Number ");
-                        int memberNumber=scanner.nextInt();
+                        int memberNumber=validation.getValidNumber();
                         if( clientService.searchClientByMemberNumber(memberNumber)!=null){
                             List<Date> dates=new ArrayList<>();
                             if(!clientService.checkClientInExternal(memberNumber).isEmpty()){
@@ -170,8 +174,6 @@ public class Main {
 
 
                         }
-
-
 
 
 

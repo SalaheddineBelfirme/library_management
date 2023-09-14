@@ -1,5 +1,7 @@
 package  book;
 import copies.copiesService;
+import  copies.copies;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,19 +65,25 @@ public class BookService {
 
 
 
-    public static boolean deleteBook(String ISBN) {
-        boolean result=false;
+    public static copies getUnavailableBook(String ISBN) {
+        copies copies  =null;
         try (Connection connection = DatabaseManager.getConnection()) {
-            String deleteSql = "update  `book` set   archived=1 WHERE `ISBN` = ? ";
+            String deleteSql = "select * from `copies` WHERE `ISBN` = ?  and status='unavailable'";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
                 preparedStatement.setString(1, ISBN);
-                 result = preparedStatement.executeUpdate()>0;
+                 ResultSet resultSet = preparedStatement.executeQuery();
+                 if (resultSet.next()){
+                     copies =new copies(resultSet.getInt("id"),resultSet.getString("isbn"),resultSet.getString("status"));
+
+                 }
+                 else {
+                     System.out.println(resultSet);
+                 }
             }
         } catch (SQLException e) {
-            // Handle database exceptions
             e.printStackTrace();
         }
-        return  result;
+        return copies;
     }
 
     public static book getBookByISBN(String ISBN) {
@@ -104,23 +112,25 @@ public class BookService {
 
 
 
-    public static boolean archivBook(String ISBN) {
-        boolean res=false;
-        try (Connection connection = DatabaseManager.getConnection()) {
-            String call = "{ call ArchiveBook(?) }";
-            try (   CallableStatement callableStatement = connection.prepareCall(call);) {
-
-                callableStatement.setString(1, ISBN);
-
-                callableStatement.execute();
-                res=true;
-
+    public static int archivBook(String ISBN) {
+        int res=0;
+        if (getUnavailableBook(ISBN)==null){
+            try (Connection connection = DatabaseManager.getConnection()) {
+                String call = "{ call ArchiveBook(?) }";
+                try (   CallableStatement callableStatement = connection.prepareCall(call);) {
+                    callableStatement.setString(1, ISBN);
+                    callableStatement.execute();
+                    res=1;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            // Handle database exceptions
-            e.printStackTrace();
         }
-        return true;
+        else {
+            res= 2;
+        }
+
+        return res;
     }
 
 
@@ -146,16 +156,15 @@ public class BookService {
                 }
             }
         } catch (SQLException e) {
-            // Handle database exceptions
             e.printStackTrace();
         }
-        return null; // Book not found or an error occurred
+        return null;
     }
     public static   List<book> getAllBooks() {
         List<book> books = new ArrayList<>();
 
         try (Connection connection = DatabaseManager.getConnection()) {
-            String selectSql = "SELECT * FROM `book` where archived=0"; // Assuming `book` is your table name
+            String selectSql = "SELECT * FROM `book` where archived=0";
             try (PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -164,17 +173,12 @@ public class BookService {
                         String author = resultSet.getString("author");
                         String informations = resultSet.getString("informations");
                         int quantity = resultSet.getInt("quantity");
-
-                        // Create a Book object from the database data
                         book book = new book(ISBN, title, author, informations, quantity);
-
-                        // Add the book to the list
                         books.add(book);
                     }
                 }
             }
         } catch (SQLException e) {
-            // Handle database exceptions
             e.printStackTrace();
         }
 
@@ -222,17 +226,15 @@ public class BookService {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
                     if (resultSet.next()) {
-                        // Create a Book object from the retrieved data
                         res= resultSet.getInt("id");
                     }
 
                 }
             }
         } catch (SQLException e) {
-            // Handle database exceptions
             e.printStackTrace();
         }
-        return res; // Book not found or an error occurred
+        return res;
     }
 
     public static int returnBook(int idCopie ,int memberNumber) {
@@ -247,7 +249,6 @@ public class BookService {
                 res=preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            // Handle database exceptions
             e.printStackTrace();
         }
         return res;
